@@ -12,27 +12,34 @@ import {
   Header,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { CreateCatDto, UpdateCatDto } from './cats.dto';
+import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 export class CatsController {
+  //CatsService is injected through the class constructor
+  constructor(private catsService: CatsService) {}
+
   @Get()
-  findAll(@Req() request: Request): string {
-    console.log(request.path, request.hostname);
-    return 'This action returns all cats';
+  async findAll(@Req() request: Request): Promise<Cat[]> {
+    // console.log(request.path, request.hostname);
+    return this.catsService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string): string {
+    console.log('inside');
     return `This action returns a #${id} cat`;
   }
 
   // This is platform specific (express)
   @Post()
-  create(
+  async create(
     @Res() response: Response,
     @Body() createCatDto: CreateCatDto,
-  ): object {
+  ): Promise<object> {
+    this.catsService.create(createCatDto);
     return (
       response
         .status(201)
