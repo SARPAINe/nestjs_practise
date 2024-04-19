@@ -10,11 +10,23 @@ import {
   Put,
   Delete,
   Header,
+  HttpException,
+  HttpStatus,
+  ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CreateCatDto, UpdateCatDto } from './dto/cats.dto';
 import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
+
+class CustomError extends Error {
+  statusCode: number;
+  constructor(message) {
+    super(message);
+    this.statusCode = 401;
+  }
+}
 
 @Controller('cats')
 export class CatsController {
@@ -27,8 +39,27 @@ export class CatsController {
     return this.catsService.findAll();
   }
 
+  @Get('error')
+  error(@Res() response: Response) {
+    // response.status(401).send({ data: 'nothiong' });
+    // throw new CustomError('Unauthorized');
+    // throw new Error('test');
+    // throw new HttpException(
+    //   { message: 'Forbidden', reason: 'Test' },
+    //   HttpStatus.FORBIDDEN,
+    // );
+    throw new HttpException('Test', 403);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string): string {
+  findOne(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+    @Query('price', ParseIntPipe) price: number,
+  ): string {
     console.log('inside');
     return `This action returns a #${id} cat`;
   }

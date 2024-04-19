@@ -24,6 +24,9 @@ export class AppModule implements NestModule {
       //   method: RequestMethod.POST,
       // })
       .forRoutes(CatsController);
-    // .forRoutes({ path: 'cats', method: RequestMethod.GET });
+    // .forRoutes(
+    //   { path: 'cats', method: RequestMethod.ALL },
+    //   { path: 'cats/*', method: RequestMethod.GET },
+    // );
   }
 }
