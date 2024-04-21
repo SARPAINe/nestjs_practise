@@ -9,6 +9,7 @@ async function bootstrap() {
       whitelist: true, //extra properties are trimmed
       forbidNonWhitelisted: true, //throws an error if extra properties are added
       transform: true, //transform the body to exactly an object of dto
+      transformOptions: { enableImplicitConversion: true },
     }),
   );
   await app.listen(3000);
